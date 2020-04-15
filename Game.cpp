@@ -24,7 +24,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	int flags = 0;
 
 	board = new Board(static_cast<int>(width/3), static_cast<int>(height/2), (3*(width/5)), (height - 100));
-	//static BlobManager blobManager(manager, board);
 
 	if (fullscreen) {
 		flags = SDL_WINDOW_FULLSCREEN;
