@@ -1,0 +1,8 @@
+64x/
+Graphics/
+Debug/
+Release/
+NSSimulator.vcxproj
+NSSimulator.vcxproj.filters
+NSSimulator.vcxproj.user
+*.dll
