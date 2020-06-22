@@ -6,8 +6,7 @@
 #include "Game.h"
 #include "Animation.h"
 #include <map>
-
-
+#include <string>
 
 class SpriteComponent : public Component
 {
@@ -17,7 +16,7 @@ private:
 	SDL_Texture* texture;
 	SDL_Rect srcRect, destRect;
 	bool fullTexture = false;
-
+	std::string filePath;
 	int frames = 0;
 	int speed = 0;
 
@@ -29,12 +28,14 @@ public:
 	std::map<const char*, Animation> animations;
 
 	SpriteComponent() = default;
-	SpriteComponent(const char* path)
+	SpriteComponent(std::string path)
 	{
-		setTexture(path);
+		filePath = path;
+		const char* c = filePath.c_str();
+		setTexture(c);
 	}
 
-	SpriteComponent(const char* path, bool isAnimated)
+	SpriteComponent(std::string path, bool isAnimated)
 	{
 
 		Animation Up = Animation(1, 2, 100);
@@ -42,14 +43,19 @@ public:
 		Animation Left = Animation(3, 2, 100);
 		Animation Right = Animation(2, 2, 100);
 		Animation Dead = Animation(4, 1, 100);
+		Animation Eaten = Animation(5, 1, 100);
 
 		animations.emplace("Up", Up);
 		animations.emplace("Down", Down);
 		animations.emplace("Left", Left);
 		animations.emplace("Right", Right);
 		animations.emplace("Dead", Dead);
+		animations.emplace("Eaten", Eaten);
 
-		setTexture(path);
+		filePath = path;
+		const char* c = filePath.c_str();
+
+		setTexture(c);
 		animated = isAnimated;
 		Play("Up");
 
@@ -66,6 +72,14 @@ public:
 		texture = TextureManager::LoadTexture(path);
 	}
 
+	void updateTexture()
+	{
+		const char* c = filePath.c_str();
+		SDL_DestroyTexture(texture);
+		texture = TextureManager::LoadTexture(c);
+
+	}
+
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
@@ -74,7 +88,7 @@ public:
 
 		srcRect.w = transform->basewidth;
 		srcRect.h = transform->baseheight;
-
+		
 		destRect.w = transform->width;
 		destRect.h = transform->height;
 	}
@@ -85,7 +99,10 @@ public:
 		if (animated && isActive()){
 			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
 		}
-		
+
+		if (!isActive()) {
+			srcRect.x = 0;
+		}
 	
 		srcRect.y = animIndex * transform->baseheight;
 		
@@ -102,7 +119,7 @@ public:
 	}
 
 
-	void draw() override
+	void draw() noexcept override
 	{
 		if (fullTexture) {
 			TextureManager::DrawFull(texture, destRect);

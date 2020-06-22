@@ -15,22 +15,34 @@ struct EnergyFormula : public Formula
 
 	void update() override
 	{
-		auto blobs(lController->manager->getGroup(groupBlobsActive));
+		auto& blobs(lController->manager->getGroup(groupBlobsActive));
 
-		for (auto b : blobs)
+		for (auto& b : blobs)
 		{
-
-			if (b->energy <= 0)
+			if (b->state == hunting) {
+				if (b->energy <= 0)
 				{
-				b->getComponent<TransformComponent>().deactivate();
-				b->getComponent<MovementSpriteChanger>().deactivate();
-				b->getComponent<RandomWalkComponent>().deactivate();
-				b->getComponent<SpriteComponent>().deactivate();
-				b->getComponent<SpriteComponent>().setColor(255, 128, 128);
-				b->getComponent<SpriteComponent>().Play("Dead");
-				b->addGroup(groupBlobsInactive);
-				b->delGroup(groupBlobsActive);
+					if (b->eaten == 0) {
+						b->getComponent<TransformComponent>().deactivate();
+						b->getComponent<MovementSpriteChanger>().deactivate();
+						b->getComponent<RandomWalkComponent>().deactivate();
+						b->getComponent<DestinationComponent>().deactivate();
+						b->getComponent<SpriteComponent>().deactivate();
+						b->getComponent<ColorChangeComponent>().deactivate();
+						b->getComponent<SpriteComponent>().setColor(255, 128, 128);
+						b->getComponent<SpriteComponent>().Play("Dead");
+						b->state = dead;
+					}
+					if (b->eaten == 1) {
+						b->state = surviving;
+						b->getComponent<DestinationComponent>().deactivate();
+					}
 				}
+				if (b->eaten >= 2) {
+					b->state = reproducing;
+					b->getComponent<DestinationComponent>().deactivate();
+				}
+			}
 
 		}
 

@@ -1,23 +1,25 @@
 #include "Game.h"
+//#include "Python.h"
 
 Game* game = nullptr;
 
-static int WindowW = 1200;
+static int WindowW = 1600;
 static int WindowH = 800;
 
 
 int main(int argc, char* argv[])
 {   
-    const int FPS = 2000;
+    const int FPS = 200;
     static const int* pFPS = &FPS;
     const int frameDelay = 1000 / FPS;
+    //Py_Initialize();
 
     Uint32 frameStart;
     int frameTime;
 
     game = new Game();
 
-    game->init("Test 1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowW, WindowH, false);
+    game->init("Natural selection simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowW, WindowH, false);
 
     while (game->running()) {
 
@@ -36,6 +38,6 @@ int main(int argc, char* argv[])
     }
 
     game->clean();
-
+    //Py_Finalize();
     return 0;
 }

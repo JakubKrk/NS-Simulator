@@ -18,25 +18,33 @@ struct FoodEatingFormula : public Formula
 	void update() override
 	{
 
-		auto blobs(lController->manager->getGroup(groupBlobsActive));
-		auto food(lController->manager->getGroup(groupFood));
+		auto& blobs(lController->manager->getGroup(groupBlobsActive));
+		auto& food(lController->manager->getGroup(groupFood));
 
 		for (auto& b : blobs)
 		{
+			if (b->state == hunting) {
 
-			for (auto& f : food)
-			{
-				if (Collision::AABB(b, f))
+				for (auto& f : food)
 				{
-					if (b->eaten < 2) {
-						b->eaten += 1;
-						f->destroy();
+					if (f->isActive()) {
+
+						if (Collision::AABB(b->getComponent<ColliderComponent>().collider,
+							f->getComponent<ColliderComponent>().collider))
+						{
+							b->eaten += 1;
+							f->destroy();
+						
+						}
 					}
 				}
 
 			}
 		}
+
+
 	}
+
 
 
 };

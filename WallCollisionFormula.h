@@ -18,9 +18,9 @@ struct WallCollisionFormula : public Formula
 	void update() override
 	{
 
-		auto blobs(lController->manager->getGroup(groupBlobsActive));
-		auto wallsV(lController->manager->getGroup(groupWallVertical));
-		auto wallsH(lController->manager->getGroup(groupWallHorizontal));
+		auto& blobs(lController->manager->getGroup(groupBlobsActive));
+		auto& wallsV(lController->manager->getGroup(groupWallVertical));
+		auto& wallsH(lController->manager->getGroup(groupWallHorizontal));
 
 
 		for (auto& b : blobs)
@@ -28,7 +28,8 @@ struct WallCollisionFormula : public Formula
 
 			for (auto& wv : wallsV)
 			{
-				if (Collision::AABB(b, wv))
+				if (Collision::AABB(b->getComponent<ColliderComponent>().collider,
+									wv->getComponent<ColliderComponent>().collider))
 				{
 					b->getComponent<TransformComponent>().velocity.inverseX();
 					//b->getComponent<TransformComponent>().position.x = b->getComponent<TransformComponent>().position.x + 4 * (-b->getComponent<TransformComponent>().velocity.X());
@@ -42,7 +43,8 @@ struct WallCollisionFormula : public Formula
 		{
 			for (auto& wh : wallsH)
 			{
-				if (Collision::AABB(b, wh))
+				if (Collision::AABB(b->getComponent<ColliderComponent>().collider,
+									wh->getComponent<ColliderComponent>().collider))
 				{
 
 					b->getComponent<TransformComponent>().velocity.inverseY();

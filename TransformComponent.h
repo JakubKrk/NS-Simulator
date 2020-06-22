@@ -18,7 +18,6 @@ public:
 	float scale;
 	int baseheight;
 	int basewidth;
-	int speed = 1;
 
 	TransformComponent()
 	{
@@ -50,9 +49,9 @@ public:
 	void update() override
 	{
 		if (isActive()) {
-			position.x += velocity.X() * speed;
-			position.y += velocity.Y() * speed;
-			entity->energy -= speed;
+			position.x += velocity.X() * entity->speed;
+			position.y += velocity.Y() * entity->speed;
+			entity->energy -= (entity->speed)*2 + (entity->speed)* (entity->speed) + (entity->size)* (entity->size)* (entity->size);
 		}
 	}
 
@@ -61,8 +60,7 @@ public:
 		scale = s;
 		height = baseheight * scale;
 		width = basewidth * scale;
+
 	}
-
-
 
 };

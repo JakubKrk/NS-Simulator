@@ -5,12 +5,14 @@ using Group = std::size_t;
 
 static enum groupLabels : std::size_t
 {
-
-	groupBlobsActive,
-	groupBlobsInactive,
-	groupFood,
+	groupGraphs,
+	groupBackground,
+	groupPlots,
 	groupWallVertical,
 	groupWallHorizontal,
-	groupBackground
+	groupFood,
+	groupBlobsActive,
+	groupBlobsInactive,
+	groupFoodInactive,
 
 };

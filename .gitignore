@@ -1,8 +1,13 @@
-64x/
+x64/
 Graphics/
 Debug/
 Release/
+.venv/
+.vscode/
+AAA/
+ARM/
 NSSimulator.vcxproj
 NSSimulator.vcxproj.filters
 NSSimulator.vcxproj.user
 *.dll
+*.csv

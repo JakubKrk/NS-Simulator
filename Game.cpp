@@ -1,13 +1,25 @@
 #include "Game.h"
 #include "Formulas.h"
 #include "LCS.h"
+#include <iostream>
+#include <fstream>
 
 SDL_Renderer* Game::renderer;
 SDL_Event Game::event;
 Manager* Game::manager = new Manager();
 LogicController* Game::logic = new LogicController(Game::manager);
 Board* Game::board;
-
+GameState Game::state;
+int Game::generation;
+int Game::lastGeneration;
+int Game::windowH;
+int Game::windowW;
+int Game::blobsAressionDelay;
+int Game::foodForGeneration;
+float Game::inhertianceDeviation;
+int Game::firstGenerationPopulation;
+float Game::startingEnergy;
+bool Game::aggresion;
 bool start = true;
 
 
@@ -21,7 +33,25 @@ Game::~Game() {
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
+	if (!(IMG_Init(IMG_INIT_PNG)))
+	{
+		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+	}
+
 	int flags = 0;
+
+
+	Game::windowH = height;
+	Game::windowW = width;
+	Game::generation = 0;
+	Game::lastGeneration = 30;
+	Game::blobsAressionDelay = 100;
+	Game::aggresion = false;
+	Game::state = ghunting;
+	Game::foodForGeneration = 50;
+	Game::inhertianceDeviation = 0.15;
+	Game::firstGenerationPopulation = 50;
+	Game::startingEnergy = 2000;
 
 	board = new Board(static_cast<int>(width/3), static_cast<int>(height/2), (3*(width/5)), (height - 100));
 
@@ -41,7 +71,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	
 		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 		if (renderer) {
-			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			SDL_SetRenderDrawColor(renderer, 96, 96, 96, 255);
 			std::cout << "Renderer created!..." << std::endl;
 		}
 
@@ -51,67 +81,65 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = false;
 	}
 
-
-	//blobManager.createBlobs(10);
-
-	logic->CreateEnviroment();
-	//Blob* blobek = manager->addEntity<Blob>();
-	//blobek->speak();
-	//logic->CreateBlob();
-	logic->SpawnFood(50);
-	logic->SpawnBlobs(50);
+	logic->SpawnEnviroment();
+	logic->SpawnFood(Game::foodForGeneration);
+	logic->SpawnBlobs(Game::firstGenerationPopulation);
+	//logic->LoadGraphs();
+	
+	logic->addComponent<GameStatesFormula>();
 	logic->addComponent<FoodEatingFormula>();
+	logic->addComponent<BlobsEatingFormula>();
 	logic->addComponent<WallCollisionFormula>();
+	logic->addComponent<SightFormula>();
 	logic->addComponent<ReturningBlobsFormula>();
+	logic->addComponent<ReproducingFormula>();
 	logic->addComponent<EnergyFormula>();
+	logic->addComponent<OutOfBoardFormula>();
+	//logic->addComponent<LoggingFormula>();
+
 }
 
 void Game::handleEvents()
 {
 	SDL_PollEvent(&event);
+	auto& blobs(logic->manager->getGroup(groupBlobsActive));
 	switch (event.type)
 	{
 	case SDL_QUIT:
 		isRunning = false;
+		remove("blobs.csv");
 		break;
 
-	default:
+	case SDL_MOUSEBUTTONDOWN:
+		
+		auto& blobs(logic->manager->getGroup(groupBlobsActive));
+		for (auto& b : blobs)
+		{
+			std::cout << "----------------" << std::endl;
+			std::cout << "State : " << b->state << std::endl;
+			std::cout << "Energy : " << b->energy << std::endl;
+			std::cout << "Eaten : " << b->eaten << std::endl;
+			std::cout << "Active dest. : " << b->getComponent<DestinationComponent>().isActive() << std::endl;
+			std::cout << "Reached dest. : " << b->getComponent<DestinationComponent>().isReached() << std::endl;
+		}
 		break;
+
+
 	}
 }
 
 void Game::update()
 {
-	/*auto& blob(manager->getGroup(groupBlobsActive));
-
-	for (auto* b : blob)
-	{
-		b->speak();
-	}*/
-
-	manager->refresh();
-	manager->update();
-	logic->update();
+	if (Game::state != generationspassed){
+		manager->update();
+		logic->update();
+	}
 }
 
 void Game::render()
 {
 
 	SDL_RenderClear(renderer);
-
-	//auto& blobs(manager->getGroup(groupBlobsActive));
-	//auto& background(manager->getGroup(groupBackground));
-
-
-	//for (auto& b : background)
-	//{
-	//	b->draw();
-	//}
-
-	//for (auto& bl : blobs)
-	//{
-	//	bl->draw();
-	//}
 
 	manager->draw();
 

@@ -19,6 +19,12 @@ void Vector2D::setAngle(float angle)
 	{
 		angle = fmod(angle, 360);
 	}
+
+	if (angle < 0)
+	{
+		angle = 360 + angle;
+	}
+
 	this->a = angle;
 	calcXY();
 }
@@ -29,8 +35,16 @@ void Vector2D::setXY(float x, float y)
 	float deg = atan2(y, x)* (180 / M_PI);
 
 
-	deg = fmod(deg, 360);
-	setAngle(deg);
+	//deg = fmod(deg, 360);
+
+	if (deg < 0)
+	{
+		setAngle(360+deg);
+	}
+	if (deg >= 0)
+	{
+		setAngle(deg);
+	}
 
 }
 
@@ -44,6 +58,7 @@ void Vector2D::calcXY()
 void Vector2D::calcAngle()
 {
 	float deg = atan2(this->y, this->x) * (180 / M_PI);
+	//deg = fmod(deg, 360);
 
 	if (deg < 0)
 	{

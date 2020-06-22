@@ -27,55 +27,57 @@ struct ReturningBlobsFormula : public Formula
 
 	void update() override
 	{
-		auto blobs(lController->manager->getGroup(groupBlobsActive));
+		auto& blobs(lController->manager->getGroup(groupBlobsActive));
 
-		for (auto b : blobs)
+		for (auto& b : blobs)
 		{
-			if (b->eaten >= 2)
+			if ((b->state == surviving || b->state == reproducing) && !(b->getComponent<DestinationComponent>().isActive()) && !(b->getComponent<DestinationComponent>().isReached()))
 			{
-				Point dest = calcClosestWall(b);
+				Point dest = calcClosestWall(b->getComponent<TransformComponent>().position.x,
+												b->getComponent<TransformComponent>().position.y,
+												b->getComponent<TransformComponent>().width, 
+												b->getComponent<TransformComponent>().height);
 				b->getComponent<RandomWalkComponent>().deactivate();
-				b->addComponent<DestinationComponent>();
+				b->getComponent<SightComponent>().deactivate();
+				b->getComponent<DestinationComponent>().activate();
 				b->getComponent<DestinationComponent>().setXY(dest.x, dest.y);
-				b->getComponent<SpriteComponent>().setColor(128, 128, 255);
 			}
 
-			if (b->hasComponent<DestinationComponent>())
+
+			if ((b->state == surviving || b->state == reproducing) && b->getComponent<DestinationComponent>().isActive() && b->getComponent<DestinationComponent>().isReached())
 			{
-				if (b->getComponent<DestinationComponent>().isReached())
-				{
-					b->addComponent<DestinationComponent>().deactivate();
-					b->getComponent<SpriteComponent>().setColor(128, 128, 128);
+					b->getComponent<DestinationComponent>().deactivate();
 					b->getComponent<SpriteComponent>().deactivate();
-				}
+					b->getComponent<TransformComponent>().deactivate();
 			}
+			
 
 		}
 
 	}
 
-	Point calcClosestWall(Entity* e)
+	Point calcClosestWall(float X, float Y, float W, float H)
 	{
-		distDW = abs(DW - e->getComponent<TransformComponent>().position.y);
-		distUW = abs(UW - e->getComponent<TransformComponent>().position.y);
-		distLW = abs(LW - e->getComponent<TransformComponent>().position.x);
-		distRW = abs(RW - e->getComponent<TransformComponent>().position.x);
+		distDW = abs(DW - Y);
+		distUW = abs(UW - Y);
+		distLW = abs(LW - X);
+		distRW = abs(RW - X);
 
 		if (distDW == std::min({ distDW, distUW, distLW, distRW }))
 		{
-			return Point(e->getComponent<TransformComponent>().position.x, DW - e->getComponent<TransformComponent>().height / 2 - 2);
+			return Point(X, DW - H / 2 - 2);
 		}
 		if (distUW == std::min({ distDW, distUW, distLW, distRW }))
 		{
-			return Point(e->getComponent<TransformComponent>().position.x, UW + e->getComponent<TransformComponent>().height / 2 + 2);
+			return Point(X, UW + H / 2 + 2);
 		}
 		if (distLW == std::min({ distDW, distUW, distLW, distRW }))
 		{
-			return Point(LW + e->getComponent<TransformComponent>().width / 2 + 2, e->getComponent<TransformComponent>().position.y);
+			return Point(LW + W / 2 + 2, Y);
 		}
 		if (distRW == std::min({ distDW, distUW, distLW, distRW }))
 		{
-			return Point(RW - e->getComponent<TransformComponent>().width / 2 - 2, e->getComponent<TransformComponent>().position.y);
+			return Point(RW - W / 2 - 2, Y);
 		}
 
 

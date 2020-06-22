@@ -4,15 +4,24 @@
 #include "SDL_image.h"
 #include <iostream>
 #include <iomanip>
-// "ECS.h"
-//#include "LCS.h"
-//#include "Board.h"
 #include <vector>
 
 class ColliderComponent;
 class LogicController;
 class Manager;
 class Board;
+
+using GameState = std::size_t;
+
+static enum gamestates : std::size_t {
+
+	ghunting,
+	greturning,
+	gwaiting,
+	greproducing,
+	generationspassed,
+
+};
 
 class Game
 {
@@ -34,6 +43,17 @@ public:
 	static Manager* manager;
 	static SDL_Renderer* renderer;
 	static SDL_Event event;
+	static GameState state;
+	static bool aggresion;
+	static int blobsAressionDelay;
+	static int generation;
+	static int lastGeneration;
+	static int foodForGeneration;
+	static float inhertianceDeviation;
+	static float startingEnergy;
+	static int firstGenerationPopulation;
+	static int windowH;
+	static int windowW;
 
 private:
 

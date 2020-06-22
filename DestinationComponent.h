@@ -39,7 +39,6 @@ public:
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
-		activate();
 	}
 
 	void update() override
@@ -47,11 +46,11 @@ public:
 		if (isActive())
 		{
 			calc();
-			if (sqrt(dX * dX + dY * dY) > transform->speed) {
+			if (sqrt(dX * dX + dY * dY) > entity->speed) {
 				transform->velocity.setAngle(velocity.A());
+
 			}
-			if (sqrt(dX * dX + dY * dY) <= transform->speed) {
-				transform->speed = 0;
+			if (sqrt(dX * dX + dY * dY) <= entity->speed) {
 				transform->position.x = destination.x;
 				transform->position.y = destination.y;
 			}
