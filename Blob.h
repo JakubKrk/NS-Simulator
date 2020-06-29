@@ -59,7 +59,7 @@ public:
     void init() override
     {
         energy = Game::startingEnergy;
-        eaten = 1.0;
+        eaten = 0;
         speed = 1.0;
         sight = 1.0;
         size = 1.0;

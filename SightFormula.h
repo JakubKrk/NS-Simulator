@@ -32,45 +32,45 @@ struct SightFormula : public Formula
 					bool runningaway = false;
 
 					//run from bigger blob
-					if (Game::aggresion) {
-						for (auto& b2 : blobs)
-						{
-							if (b2->state == hunting) {
-								if (Collision::RBB(b->getComponent<SightComponent>().sight,
-									b2->getComponent<ColliderComponent>().collider))
-								{
-									if (b2->size > 1.25 * b->size) {
-										b->getComponent<RandomWalkComponent>().deactivate();
 
-										b->getComponent<DestinationComponent>().activate();
+					for (auto& b2 : blobs)
+					{
+						if (b2->state == hunting) {
+							if (Collision::RBB(b->getComponent<SightComponent>().sight,
+								b2->getComponent<ColliderComponent>().collider))
+							{
+								if (b2->size > 1.25 * b->size) {
+									b->getComponent<RandomWalkComponent>().deactivate();
 
-										float x, y;
-										float dX, dY;
+									b->getComponent<DestinationComponent>().activate();
 
-										dX = b2->getComponent<TransformComponent>().position.x - b->getComponent<TransformComponent>().position.x;
-										if (dX >= 0) {
-											x = b->getComponent<TransformComponent>().position.x - 10;
-										}
-										if (dX < 0) {
-											x = b->getComponent<TransformComponent>().position.x + 10;
-										}
+									float x, y;
+									float dX, dY;
 
-										dY = b2->getComponent<TransformComponent>().position.y - b->getComponent<TransformComponent>().position.y;
-										if (dY >= 0) {
-											y = b->getComponent<TransformComponent>().position.y - 10;
-										}
-										if (dY < 0) {
-											y = b->getComponent<TransformComponent>().position.y + 10;
-										}
-
-										b->getComponent<DestinationComponent>().setXY(x, y);
-										runningaway = true;
-										break;
+									dX = b2->getComponent<TransformComponent>().position.x - b->getComponent<TransformComponent>().position.x;
+									if (dX >= 0) {
+										x = b->getComponent<TransformComponent>().position.x - 10;
 									}
+									if (dX < 0) {
+										x = b->getComponent<TransformComponent>().position.x + 10;
+									}
+
+									dY = b2->getComponent<TransformComponent>().position.y - b->getComponent<TransformComponent>().position.y;
+									if (dY >= 0) {
+										y = b->getComponent<TransformComponent>().position.y - 10;
+									}
+									if (dY < 0) {
+										y = b->getComponent<TransformComponent>().position.y + 10;
+									}
+
+									b->getComponent<DestinationComponent>().setXY(x, y);
+									runningaway = true;
+									break;
 								}
 							}
 						}
 					}
+				
 
 					//chase food
 					if (!runningaway){

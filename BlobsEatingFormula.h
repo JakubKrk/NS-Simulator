@@ -54,7 +54,7 @@ struct BlobsEatingFormula : public Formula
 									b2->getComponent<RandomWalkComponent>().deactivate();
 									b2->getComponent<SpriteComponent>().deactivate();
 									b2->getComponent<DestinationComponent>().deactivate();
-									b2->getComponent<SpriteComponent>().setColor(255, 128, 128);
+									b2->getComponent<SpriteComponent>().setColor(50, 50, 50);
 									b2->getComponent<SpriteComponent>().Play("Eaten");
 									b2->state = dead;
 

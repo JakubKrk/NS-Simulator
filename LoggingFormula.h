@@ -30,13 +30,10 @@ struct LoggingFormula : public Formula
 		myfile << Game::lastGeneration << ";";
 		myfile << "\n";
 		myfile.close();
-
-		//runPython();
-
-		auto& graphs(lController->manager->getGroup(groupPlots));
+		/*auto& graphs(lController->manager->getGroup(groupPlots));
 		for (auto& g : graphs) {
 			g->getComponent<SpriteComponent>().updateTexture();
-		}
+		}*/
 	}
 
 	void update() override
@@ -44,21 +41,12 @@ struct LoggingFormula : public Formula
 		if (Game::generation != previousGeneration)
 		{
 			auto& blobs(lController->manager->getGroup(groupBlobsActive));
-			std::cout << Game::generation << std::endl;
-			std::cout << "Blobs in this generation :" << blobs.size() << std::endl;
-			float totalSpeed = 0;
-			for (auto& b : blobs) {
-				totalSpeed += b->speed;
-			}
-			float avgSpeed = totalSpeed / blobs.size();
-			std::cout << "Avg speed in this generation :" << avgSpeed << std::endl;
-
 
 			std::ofstream myfile("blobs.csv", std::ios::app);
 			myfile << Game::generation << ";";
 			myfile << blobs.size() << ";";
 			for (auto& b : blobs) {
-				myfile << b->speed << ";";
+				myfile << b->speed <<  ";" << b->size << ";" << b->sight << ";";
 			}
 			myfile << "\n";
 			myfile.close();
@@ -68,11 +56,10 @@ struct LoggingFormula : public Formula
 			//runPython();
 
 
-
-			auto& graphs(lController->manager->getGroup(groupPlots));
-			for (auto& g : graphs) {
-				g->getComponent<SpriteComponent>().updateTexture();
-			}
+			//auto& graphs(lController->manager->getGroup(groupPlots));
+			//for (auto& g : graphs) {
+			//	g->getComponent<SpriteComponent>().updateTexture();
+			//}
 
 			previousGeneration = Game::generation;
 

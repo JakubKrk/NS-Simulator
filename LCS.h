@@ -10,6 +10,7 @@
 #include "Board.h"
 #include "Blob.h"
 #include <random>
+#include <Python.h>
 
 int random(int min, int max) {
 	static std::random_device device{};
@@ -149,20 +150,6 @@ public:
 
 	}
 
-	void LoadGraphs()
-	{
-		auto graph(manager->addEntity<Entity>(groupPlots));
-
-		float width = 500;
-		float height = 300;
-
-		graph->addComponent<TransformComponent>(1280, 200, height, width, 1);
-
-		graph->addComponent<SpriteComponent>("populations.png");
-		//graph->getComponent<TransformComponent>().setScale(1);
-		graph->getComponent<SpriteComponent>().setFullTexture(true);
-	}
-
 	void SpawnFood(int food)
 	{
 		int coordinateX, coordinateY;
@@ -234,9 +221,9 @@ public:
 
 		auto* nBlob(manager->addEntity<Blob>(groupBlobsActive));
 
-		nBlob->speed = calcRandom(parent->speed, Game::inhertianceDeviation, 0.33, 3.0);
-		nBlob->size = calcRandom(parent->size, Game::inhertianceDeviation, 0.33, 3);
-		nBlob->sight = calcRandom(parent->sight, Game::inhertianceDeviation, 0.33, 3);
+		nBlob->speed = calcRandom(parent->speed, Game::inhertianceDeviation, 0.25, 4.0);
+		nBlob->size = calcRandom(parent->size, Game::inhertianceDeviation, 0.25, 4);
+		nBlob->sight = calcRandom(parent->sight, Game::inhertianceDeviation, 0.25, 4);
 		nBlob->getComponent<TransformComponent>().setScale(nBlob->size*0.25);
 
 		switch (static_cast<int>(parent->getComponent<TransformComponent>().velocity.A()))
@@ -276,6 +263,19 @@ public:
 		nBlob->getComponent<SpriteComponent>().deactivate();
 		nBlob->getComponent<ColliderComponent>().init();
 		nBlob->getComponent<ColorChangeComponent>().updateColor();
+
+	}
+
+	void runPython()
+	{
+		char filename[] = "Grapher.py";
+		FILE* fp;
+
+
+		fp = _Py_fopen(filename, "r");
+		PyRun_SimpleFile(fp, filename);
+
+		std::cout << "Python run" << std::endl;
 
 	}
 

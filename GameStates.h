@@ -163,6 +163,7 @@ struct GameStatesFormula : public Formula
 				Game::state = generationspassed;
 				//lController->LoadGraphs();
 				lController->update();
+				lController->runPython();
 			}
 		}
 	}

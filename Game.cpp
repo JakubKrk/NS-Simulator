@@ -1,8 +1,11 @@
 #include "Game.h"
 #include "Formulas.h"
 #include "LCS.h"
+#include "Input.h"
 #include <iostream>
 #include <fstream>
+#include <limits>
+#include <ios>
 
 SDL_Renderer* Game::renderer;
 SDL_Event Game::event;
@@ -31,30 +34,24 @@ Game::~Game() {
 
 }
 
-void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
+void Game::init(const char* title, int xpos, int ypos, bool fullscreen)
 {
+
 	if (!(IMG_Init(IMG_INIT_PNG)))
 	{
 		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
 	}
 
-	int flags = 0;
+	getInput();
 
-
-	Game::windowH = height;
-	Game::windowW = width;
 	Game::generation = 0;
-	Game::lastGeneration = 30;
 	Game::blobsAressionDelay = 100;
 	Game::aggresion = false;
 	Game::state = ghunting;
-	Game::foodForGeneration = 50;
-	Game::inhertianceDeviation = 0.15;
-	Game::firstGenerationPopulation = 50;
-	Game::startingEnergy = 2000;
 
-	board = new Board(static_cast<int>(width/3), static_cast<int>(height/2), (3*(width/5)), (height - 100));
+	board = new Board(static_cast<int>(Game::windowW / 2), static_cast<int>(Game::windowH / 2), (Game::windowW -50), (Game::windowH - 50));
 
+	int flags = 0;
 	if (fullscreen) {
 		flags = SDL_WINDOW_FULLSCREEN;
 	}
@@ -62,16 +59,18 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
 		std::cout << "Subsystems inited!..." << std::endl;
 
-		window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+		window = SDL_CreateWindow(title, xpos, ypos, Game::windowW, Game::windowH, flags);
 		if (window) {
 			std::cout << "Window created!..." << std::endl;
 		}
 
-
+		SDL_Surface* icon = IMG_Load("assets/icon.png");
+		SDL_SetWindowIcon(window, icon);
+		SDL_FreeSurface(icon);
 	
 		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 		if (renderer) {
-			SDL_SetRenderDrawColor(renderer, 96, 96, 96, 255);
+			SDL_SetRenderDrawColor(renderer, 53, 92, 48, 100);
 			std::cout << "Renderer created!..." << std::endl;
 		}
 
@@ -84,7 +83,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	logic->SpawnEnviroment();
 	logic->SpawnFood(Game::foodForGeneration);
 	logic->SpawnBlobs(Game::firstGenerationPopulation);
-	//logic->LoadGraphs();
 	
 	logic->addComponent<GameStatesFormula>();
 	logic->addComponent<FoodEatingFormula>();
@@ -95,14 +93,14 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	logic->addComponent<ReproducingFormula>();
 	logic->addComponent<EnergyFormula>();
 	logic->addComponent<OutOfBoardFormula>();
-	//logic->addComponent<LoggingFormula>();
+	logic->addComponent<LoggingFormula>();
 
 }
 
 void Game::handleEvents()
 {
 	SDL_PollEvent(&event);
-	auto& blobs(logic->manager->getGroup(groupBlobsActive));
+
 	switch (event.type)
 	{
 	case SDL_QUIT:
@@ -110,21 +108,8 @@ void Game::handleEvents()
 		remove("blobs.csv");
 		break;
 
-	case SDL_MOUSEBUTTONDOWN:
-		
-		auto& blobs(logic->manager->getGroup(groupBlobsActive));
-		for (auto& b : blobs)
-		{
-			std::cout << "----------------" << std::endl;
-			std::cout << "State : " << b->state << std::endl;
-			std::cout << "Energy : " << b->energy << std::endl;
-			std::cout << "Eaten : " << b->eaten << std::endl;
-			std::cout << "Active dest. : " << b->getComponent<DestinationComponent>().isActive() << std::endl;
-			std::cout << "Reached dest. : " << b->getComponent<DestinationComponent>().isReached() << std::endl;
-		}
+	default:
 		break;
-
-
 	}
 }
 

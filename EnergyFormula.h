@@ -17,9 +17,14 @@ struct EnergyFormula : public Formula
 	{
 		auto& blobs(lController->manager->getGroup(groupBlobsActive));
 
+		
 		for (auto& b : blobs)
 		{
 			if (b->state == hunting) {
+
+
+				b->energy -= (b->sight) + ((b->speed) * (b->speed)) + ((b->size) * (b->size) * (b->size));
+
 				if (b->energy <= 0)
 				{
 					if (b->eaten == 0) {
@@ -29,7 +34,7 @@ struct EnergyFormula : public Formula
 						b->getComponent<DestinationComponent>().deactivate();
 						b->getComponent<SpriteComponent>().deactivate();
 						b->getComponent<ColorChangeComponent>().deactivate();
-						b->getComponent<SpriteComponent>().setColor(255, 128, 128);
+						b->getComponent<SpriteComponent>().setColor(50, 50, 50);
 						b->getComponent<SpriteComponent>().Play("Dead");
 						b->state = dead;
 					}
