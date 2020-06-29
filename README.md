@@ -26,3 +26,6 @@ Inspired by **Primer** YouTube channel
 
 After all the generation passed, Python script will sum-up population evolution with 3 graphs:
 
+![Figure_31](https://user-images.githubusercontent.com/60292948/86060906-044ff180-ba66-11ea-8482-c98420f93af2.png)
+![Figure_11](https://user-images.githubusercontent.com/60292948/86060908-05811e80-ba66-11ea-8032-df7884f5455c.png)
+![Figure_21](https://user-images.githubusercontent.com/60292948/86060912-06b24b80-ba66-11ea-9ae7-7629ae880c69.png)
